@@ -1,0 +1,75 @@
+{
+  "development": {
+    "username": "root",
+    "password": "0000",
+    "database": "soa_car",
+    "host": "localhost",
+    "dialect": "mysql",
+    "pool": {
+      "max": 20,
+      "min": 0,
+      "acquire": 60000,
+      "idle": 10000
+    },
+    "reconnect": true,
+    "define": {
+      "timestamps": false,
+      "freezeTableName": true
+    }
+  },
+  "docker": {
+    "username": "root",
+    "password": "0000",
+    "database": "soa_car",
+    "host": "db",
+    "port": "3306",
+    "dialect": "mysql",
+    "pool": {
+      "max": 20,
+      "min": 0,
+      "acquire": 60000,
+      "idle": 10000
+    },
+    "reconnect": true,
+    "define": {
+      "timestamps": false,
+      "freezeTableName": true
+    }
+  },
+  "test": {
+    "username": "root",
+    "password": "0000",
+    "database": "soa_car_test",
+    "host": "localhost",
+    "dialect": "mysql",
+    "pool": {
+      "max": 20,
+      "min": 0,
+      "acquire": 60000,
+      "idle": 10000
+    },
+    "reconnect": true,
+    "define": {
+      "timestamps": false,
+      "freezeTableName": true
+    }
+  },
+  "production": {
+    "username": "root",
+    "password": "0000",
+    "database": "soa_car_production",
+    "host": "localhost",
+    "dialect": "mysql",
+    "pool": {
+      "max": 20,
+      "min": 0,
+      "acquire": 60000,
+      "idle": 10000
+    },
+    "reconnect": true,
+    "define": {
+      "timestamps": false,
+      "freezeTableName": true
+    }
+  }
+}
