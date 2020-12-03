@@ -4,7 +4,9 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const createError = require('http-errors');
-
+const carRouter = require('./src/api/routers/car.router');
+const adminCarRouter = require('./src/api/routers/admin.car.router');
+const { formErrorObject, errorHandling, MAIN_ERROR_CODES } = require('./src/services/errorHandling');
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -15,7 +17,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/', (req, res) => res.status(200).send('1'));
+app.use('/api/car', carRouter);
+// app.use('/api/admin/car', adminCarRouter);
+
+app.use('*', (req, res, next) => {
+    return next(createError(formErrorObject(MAIN_ERROR_CODES.NOT_FOUND)));
+});
+
+app.use(errorHandling);
 
 try {
     httpServer.listen(HTTP_PORT, async () => {
