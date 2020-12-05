@@ -45,37 +45,26 @@ module.exports = {
       if (!errors.isEmpty()) {
         return next(createError(formErrorObject(MAIN_ERROR_CODES.VALIDATION_BODY, 'Invalid request params', errors.errors)));
       }
-      const {
-        categoryId
-      } = req.params;
-      const category = await categories.findByPk(categoryId);
-      if (!category) return next(createError(formErrorObject(MAIN_ERROR_CODES.ELEMENT_NOT_FOUND, 'Category not found')));
-      let categoriesArray = [category.id];
-      const getSubcategories = async (arr) => {
-        await Promise.all(arr.map(async (item) => {
-          let foundedCatogories = await categories.findAll({
-            where: {
-              fkCategoryId: item
-            }
-          });
-          if (!foundedCatogories) return;
-          let param = foundedCatogories.map(item => item.id);
-          categoriesArray = [...categoriesArray, ...param];
-          getSubcategories(param);
-        }));
-      }
-      await getSubcategories(categoriesArray);
+      const { carId } = req.params; 
+      const user = req.user;
 
-      const productList = await products.findAll({
+      const foundedCar = await cars.findByPk(carId);
+      if(!foundedCar) return next(createError(formErrorObject(MAIN_ERROR_CODES.ELEMENT_NOT_FOUND, 'Car not found')));
+      const garageCheck = await garage.findOne({
         where: {
-          fkCategoryId: {
-            [Op.in]: categoriesArray
-          }
+          fkCarId: carId,
+          fkUserId: user.userId
         }
-      })
-      return res.status(200).json({
-        productList
       });
+
+      if(garageCheck) return next(createError(formErrorObject(MAIN_ERROR_CODES.ELEMENT_ALREADY_DONE, 'User already has this car in garage')));
+
+      await garage.create({
+        fkCarId: carId,
+        fkUserId: user.userId
+      });
+
+      return res.status(204).end();
     } catch (error) {
       console.log(error);
       return next(createError(formErrorObject(MAIN_ERROR_CODES.SYSTEM_ERROR, 'Something went wrong, please try again')));
@@ -89,13 +78,50 @@ module.exports = {
         return next(createError(formErrorObject(MAIN_ERROR_CODES.VALIDATION_BODY, 'Invalid request params', errors.errors)));
       }
 
-      const carsList = await cars.findAll();
-      return res.status(200).json({
-        carsList
+      const { carId } = req.params; 
+      const user = req.user;
+
+      const foundedCar = await cars.findByPk(carId);
+      if(!foundedCar) return next(createError(formErrorObject(MAIN_ERROR_CODES.ELEMENT_NOT_FOUND, 'Car not found')));
+
+      const garageCheck = await garage.findOne({
+        where: {
+          fkCarId: carId,
+          fkUserId: user.userId
+        }
       });
+
+      if(!garageCheck) return next(createError(formErrorObject(MAIN_ERROR_CODES.ELEMENT_NOT_FOUND, 'Car in garage not found')));
+      garageCheck.destroy();
+      return res.status(204).end();
     } catch (error) {
       console.log(error);
       return next(createError(formErrorObject(MAIN_ERROR_CODES.SYSTEM_ERROR, 'Something went wrong, please try again')));
     }
   },
+
+  getGarageCars: async (req, res, next) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return next(createError(formErrorObject(MAIN_ERROR_CODES.VALIDATION_BODY, 'Invalid request params', errors.errors)));
+      }
+      const user = req.user;
+      const garageCars = await cars.findAll({
+        include: {
+          model: garage,
+          attributes: [], 
+          where: {
+            fkUserId: user.userId
+          }
+        }
+      });
+
+      return res.status(200).json({ garageCars });
+    } catch (error) {
+      console.log(error);
+      return next(createError(formErrorObject(MAIN_ERROR_CODES.SYSTEM_ERROR, 'Something went wrong, please try again')));
+    }
+  },
+
 }

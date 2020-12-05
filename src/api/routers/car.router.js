@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { getCars, getCarById, addToGarage, removeFromGarage } = require('../controllers/car.controller');
+const { getCars, getCarById, addToGarage, removeFromGarage, getGarageCars } = require('../controllers/car.controller');
 const {
     param_Car_Id
 } = require('../../services/apiValidations');
@@ -8,14 +8,14 @@ const { authUser, authRole } = require('../../middlewares/auth.middleware');
 router.get(
     '/getCars',
     authUser,
-    // authRole([3]),
+    authRole([3]),
     getCars
 );
 
 router.get(
     '/getCar/:carId',
     authUser,
-    // authRole([3]),
+    authRole([3]),
     [ 
         param_Car_Id()
     ],
@@ -25,7 +25,7 @@ router.get(
 router.post(
     '/addToGarage/:carId',
     authUser,
-    authRole([3]),
+    // authRole([3]),
     [ 
         param_Car_Id()
     ],
@@ -40,6 +40,13 @@ router.delete(
         param_Car_Id()
     ],
     removeFromGarage
+);
+
+router.get(
+    '/getGarageCars',
+    authUser,
+    authRole([1]),
+    getGarageCars
 );
 
 module.exports = router;

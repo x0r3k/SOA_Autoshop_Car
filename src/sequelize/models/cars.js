@@ -29,5 +29,11 @@ module.exports = (sequelize, DataType) => {
     freezeTableName: true,
   });
 
+  carsTable.associate = (models) => {
+    carsTable.hasMany(models.garage, 
+      { foreignKey: { name: 'fkCarId', allowNull: false }, foreignKeyConstraint: true}
+    );
+  }
+
   return carsTable;
 };

@@ -15,6 +15,12 @@ module.exports = (sequelize, DataType) => {
     }
   }, {
     freezeTableName: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ['fkCarId', 'fkUserId'],
+      },
+    ],
   });
 
   garageTable.associate = (models) => {

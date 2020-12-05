@@ -9,11 +9,13 @@ module.exports = {
       },
       fkUserId: {
         type: Sequelize.INTEGER,
+        unique: 'fkUserId_fkCarId_unique',
         allowNull: false,
       },
       fkCarId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        unique: 'fkUserId_fkCarId_unique',
         references: {
           model: {
             tableName: 'cars',
@@ -22,6 +24,13 @@ module.exports = {
         },
         onDelete: 'CASCADE',
       }
+    },{
+      uniqueKeys: {
+        fkUserId_fkCarId_unique: {
+          customIndex: true,
+          fields: ['fkCarId', 'fkUserId'],
+        },
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
