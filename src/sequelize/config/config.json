@@ -21,7 +21,7 @@
     "username": "root",
     "password": "0000",
     "database": "soa_car",
-    "host": "db",
+    "host": "mysql",
     "port": "3306",
     "dialect": "mysql",
     "pool": {
