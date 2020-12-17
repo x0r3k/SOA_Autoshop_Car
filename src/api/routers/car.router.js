@@ -45,7 +45,7 @@ router.delete(
 router.get(
     '/getGarageCars',
     authUser,
-    authRole([1]),
+    authRole([3]),
     getGarageCars
 );
 
