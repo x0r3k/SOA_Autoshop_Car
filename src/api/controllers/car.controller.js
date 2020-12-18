@@ -46,15 +46,37 @@ module.exports = {
         return next(createError(formErrorObject(MAIN_ERROR_CODES.VALIDATION_BODY, 'Invalid request params', errors.errors)));
       }
       const { year, brand, model, engineType, engineCapacity } = req.query;
+      const user = req.user;
+
       const whereParams = {};
       if(year) whereParams.year = year;
       if(brand) whereParams.brand = brand;
       if(model) whereParams.model = model;
       if(engineType) whereParams.engine_type = engineType;
       if(engineCapacity) whereParams.engine_capacity = engineCapacity;
-      const foundedCars = await cars.findAll({
-        where: whereParams,
+
+      const garageCars = await cars.findAll({
+        attributes: ['id'],
+        include: {
+          model: garage,
+          attributes: [],
+          where: {
+            fkUserId: user.userId
+          }
+        }
       });
+
+      const carIds = garageCars.map(item => item.id);
+
+      const foundedCars = await cars.findAll({
+        where: {
+          ...whereParams,
+          id: {
+            [Op.notIn]: carIds
+          }
+        },
+      });
+
       if (!foundedCars) return next(createError(formErrorObject(MAIN_ERROR_CODES.ELEMENT_NOT_FOUND, 'Cars not found')));
       const searchParams = {
         year: [],

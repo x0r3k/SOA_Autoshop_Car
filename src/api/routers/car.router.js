@@ -29,7 +29,7 @@ router.get(
 
 router.get(
     '/getCarByParams',
-    // authUser,
+    authUser,
     // authRole([3]),
     [ 
         query_Car_Year(),
@@ -54,7 +54,7 @@ router.post(
 router.delete(
     '/removeFromGarage/:carId',
     authUser,
-    authRole([3]),
+    // authRole([3]),
     [ 
         param_Car_Id()
     ],
