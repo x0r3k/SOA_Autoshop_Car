@@ -1,7 +1,12 @@
 const router = require('express').Router();
-const { getCars, getCarById, addToGarage, removeFromGarage, getGarageCars } = require('../controllers/car.controller');
+const { getCars, getCarById, addToGarage, removeFromGarage, getGarageCars, getCarByParams } = require('../controllers/car.controller');
 const {
-    param_Car_Id
+    param_Car_Id,
+    query_Car_Year,
+    query_Car_Brand,
+    query_Car_Model,
+    query_Car_EngineType,
+    query_Car_EngineCapacity,
 } = require('../../services/apiValidations');
 const { authUser, authRole } = require('../../middlewares/auth.middleware');
 
@@ -20,6 +25,20 @@ router.get(
         param_Car_Id()
     ],
     getCarById
+);
+
+router.get(
+    '/getCarByParams',
+    // authUser,
+    // authRole([3]),
+    [ 
+        query_Car_Year(),
+        query_Car_Brand(),
+        query_Car_Model(),
+        query_Car_EngineType(),
+        query_Car_EngineCapacity(),
+    ],
+    getCarByParams
 );
 
 router.post(

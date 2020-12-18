@@ -39,6 +39,48 @@ module.exports = {
     }
   },
 
+  getCarByParams: async (req, res, next) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return next(createError(formErrorObject(MAIN_ERROR_CODES.VALIDATION_BODY, 'Invalid request params', errors.errors)));
+      }
+      const { year, brand, model, engineType, engineCapacity } = req.query;
+      const whereParams = {};
+      if(year) whereParams.year = year;
+      if(brand) whereParams.brand = brand;
+      if(model) whereParams.model = model;
+      if(engineType) whereParams.engine_type = engineType;
+      if(engineCapacity) whereParams.engine_capacity = engineCapacity;
+      const foundedCars = await cars.findAll({
+        where: whereParams,
+      });
+      if (!foundedCars) return next(createError(formErrorObject(MAIN_ERROR_CODES.ELEMENT_NOT_FOUND, 'Cars not found')));
+      const searchParams = {
+        year: [],
+        brand: [],
+        model: [],
+        engineType: [],
+        engineCapacity: [],
+      };
+      foundedCars.forEach(item => {
+        searchParams.year.push(item.year);
+        searchParams.brand.push(item.brand);
+        searchParams.model.push(item.model);
+        searchParams.engineType.push(item.engine_type);
+        searchParams.engineCapacity.push(item.engine_capacity);
+      });
+      Object.keys(searchParams).forEach(item => {
+        searchParams[item] = [...new Set(searchParams[item])];
+      });
+      
+      return res.status(200).json({ foundedCars, searchParams });
+    } catch (error) {
+      console.log(error);
+      return next(createError(formErrorObject(MAIN_ERROR_CODES.SYSTEM_ERROR, 'Something went wrong, please try again')));
+    }
+  },
+
   addToGarage: async (req, res, next) => {
     try {
       const errors = validationResult(req);

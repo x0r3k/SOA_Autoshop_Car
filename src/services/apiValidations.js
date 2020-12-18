@@ -14,4 +14,23 @@ module.exports = {
       return isRequiredParameter(isRequired, 'categoryId').notEmpty().withMessage('Should not be empty').bail()
         .custom(value => isNumber(value) ? true : false).withMessage('Should be an integer value').bail();
     },
+    query_Car_Year: () => {
+      return query('year').optional().isInt().withMessage('Should be an integer value').bail();
+    },
+    query_Car_Brand: () => {
+      return query('brand').optional().notEmpty().withMessage('Should not be empty').bail()
+        .isString().withMessage('Should be string');
+    },
+    query_Car_Model: () => {
+      return query('model').optional().notEmpty().withMessage('Should not be empty').bail()
+        .isString().withMessage('Should be string');
+    },
+    query_Car_EngineType: (isRequired) => {
+      return query('engineType').optional().notEmpty().withMessage('Should not be empty').bail()
+        .isString().withMessage('Should be string');
+    },
+    query_Car_EngineCapacity: (isRequired) => {
+      return query('engineCapacity').optional().notEmpty().withMessage('Should not be empty').bail()
+        .isDecimal().withMessage('Should be decimal');
+    },
 }
